@@ -1,3 +1,3 @@
 # vole
 
-Tiny game engine
+Tiny 2D game engine

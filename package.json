@@ -1,11 +1,11 @@
 {
   "name": "vole",
   "version": "0.0.1",
-  "description": "Tiny game engine",
+  "description": "Tiny 2D game engine",
   "main": "dist/index.js",
   "scripts": {
 	"build": "tsc",
-	"test": "jest",
+	"test": "jest --watchAll",
 	"ci": "jest --ci"
   },
   "author": "ivanjermakov",
