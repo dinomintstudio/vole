@@ -38,7 +38,7 @@ jobs:
           npm install
       - name: npm build
         run: |
-          npm run build
+          npm run build:dev
       - name: npm ci
         run: |
           npm run ci
