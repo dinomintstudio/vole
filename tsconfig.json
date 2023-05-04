@@ -22,11 +22,6 @@
 	"skipLibCheck": true
   },
   "include": [
-	"src/**/*",
-	"node_modules/.pnpm/ts-jest@29.1.0_@babel+core@7.21.8_jest@29.5.0_typescript@5.0.4/node_modules/ts-jest/globals.d.ts"
-  ],
-  "exclude": [
-	"../node_modules",
-	"src/**/*.spec.ts"
+	"src/**/*"
   ]
 }
