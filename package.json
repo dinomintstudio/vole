@@ -2,7 +2,6 @@
   "name": "vole",
   "version": "0.0.1",
   "description": "Tiny 2D game engine",
-  "main": "dist/index.js",
   "scripts": {
 	"build:dev": "tsc",
 	"build:prod": "tsc -p tsconfig.prod.json",

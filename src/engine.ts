@@ -1,4 +1,4 @@
-import {isBrowser} from 'src/util/runtime'
+import {isBrowser} from './util/runtime'
 
 export interface FrameInfo {
     lastFrameMillis: number

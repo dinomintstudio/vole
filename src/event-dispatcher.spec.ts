@@ -1,5 +1,5 @@
 import {describe, expect, it} from '@jest/globals'
-import {EventDispatcher} from 'src/event-dispatcher'
+import {EventDispatcher} from './event-dispatcher'
 
 describe('event dispatcher test', () => {
 

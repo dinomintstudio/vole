@@ -26,7 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Eventable} from 'src/eventable'
+import {Eventable} from './eventable'
 
 export class EventDispatcher<T = any> implements Eventable<T> {
     private _handlers: { [key: string]: { (event: T): void }[] } = {}
