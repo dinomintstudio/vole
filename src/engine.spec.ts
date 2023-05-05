@@ -10,8 +10,8 @@ describe('engine test', () => {
     it('should run game loop', done => {
         let count = 0
         const engine = new class extends Engine {
-            update() {
-                super.update()
+            update(delta: number) {
+                super.update(delta)
                 count++
             }
         }
