@@ -1,5 +1,4 @@
 <h1 align="center">
-  <br>
   <img src="https://raw.githubusercontent.com/dinomintstudio/vole/master/data/logo/logo.svg" width="200">
   <br>
   Nois
