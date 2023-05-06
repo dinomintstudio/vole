@@ -1,22 +1,20 @@
 import {isBrowser} from './util/runtime'
 import {EngineEventDispatcher} from './engine-event-dispatcher'
+import {Scene} from './scene'
 
 export interface FrameInfo {
+    id: number
     lastFrameMillis: number
     lastFrameDelta: number
     frameRequestMillis: number
 }
 
-export interface Performance {
+export interface PerformanceInfo {
     updateDelta: number
     frameDelta: number
     idleDelta: number
-}
-
-export interface Entity {
-    id?: number
-
-    update(delta: number): void
+    fps: number
+    fpsPotential: number
 }
 
 export class Engine {
@@ -25,13 +23,16 @@ export class Engine {
     delta = 1000 / this.fps
 
     isRunning: boolean = false
-    frameInfo: FrameInfo = {lastFrameMillis: 0, lastFrameDelta: 0, frameRequestMillis: 0}
-    performanceInfo: Performance = {updateDelta: 0, frameDelta: 0, idleDelta: 0}
-    entities: Entity[] = []
+    frameInfo: FrameInfo = {id: 0, lastFrameMillis: 0, lastFrameDelta: 0, frameRequestMillis: 0}
+    performanceInfo: PerformanceInfo = {updateDelta: 0, frameDelta: 0, idleDelta: 0, fps: 0, fpsPotential: 0}
     eventDispatcher: EngineEventDispatcher = new EngineEventDispatcher()
 
-    private uid = 0
-    private requestId?: number | ReturnType<typeof setTimeout>
+    uid = 0
+    frameCount = 0
+    requestId?: number | ReturnType<typeof setTimeout>
+
+    activeScene?: Scene
+    private sceneMap: Map<string, Scene> = new Map<string, Scene>()
 
     start(): void {
         if (this.isRunning) return
@@ -41,7 +42,8 @@ export class Engine {
             if (!this.isRunning) return
             this.requestId = this.requestFrame(gameLoop)
 
-            const delta = frameFireTime - (this.frameInfo?.lastFrameMillis || 0)
+            const delta = frameFireTime - (this.frameInfo?.lastFrameMillis ?? 0)
+            this.frameInfo.id = ++this.frameCount
             this.frameInfo.lastFrameMillis = frameFireTime
             this.frameInfo.lastFrameDelta = delta
 
@@ -54,7 +56,8 @@ export class Engine {
             this.performanceInfo.frameDelta = delta
             this.performanceInfo.updateDelta = afterUpdate - beforeUpdate
             this.performanceInfo.idleDelta = this.performanceInfo.frameDelta - this.performanceInfo.updateDelta
-            console.debug(this.frameInfo, this.performanceInfo)
+            this.performanceInfo.fps = 1000 / delta
+            this.performanceInfo.fpsPotential = 1000 / this.performanceInfo.updateDelta
             this.frameInfo.frameRequestMillis = afterUpdate
         }
 
@@ -65,22 +68,36 @@ export class Engine {
         this.isRunning = false
     }
 
-    update(delta: number) {
-        for (let i = 0; i < this.entities.length; i++) {
-            this.entities[i].update(delta)
+    update(delta: number): void {
+        if (!this.activeScene) return
+        const entities = this.activeScene.entities
+        for (let i = 0; i < entities.length; i++) {
+            const e = entities[i]
+            if (!e.initialized) {
+                e.init(this)
+                e.initialized = true
+            }
+        }
+        for (let i = 0; i < entities.length; i++) {
+            entities[i].update(this, delta)
         }
     }
 
-    add(entity: Entity): Entity {
-        if (entity.id) return entity
-
-        entity.id = ++this.uid
-        this.entities.push(entity)
-        return entity
+    addScene(scene: Scene): void {
+        if (this.sceneMap.get(scene.name)) return
+        scene.engine = this
+        this.sceneMap.set(scene.name, scene)
+        scene.init()
     }
 
-    remove(id: number): void {
-        this.entities = this.entities.filter(e => e.id !== id)
+    removeScene(sceneName: string): void {
+        this.sceneMap.delete(sceneName)
+    }
+
+    goToScene(sceneName: string): void {
+        const scene = this.sceneMap.get(sceneName)
+        if (!scene) return
+        this.activeScene = scene
     }
 
     private requestFrame(gameLoop: (time: number) => void): number | ReturnType<typeof setTimeout> {
@@ -90,9 +107,7 @@ export class Engine {
             let now = performance.now()
             if (this.frameInfo?.lastFrameMillis) {
                 const error = this.delta - this.frameInfo.lastFrameDelta
-                console.log({error})
                 const toWait = now - (this.frameInfo.lastFrameMillis + this.delta) - error
-                console.debug({toWait})
                 return setInterval(() => gameLoop(now), toWait)
             } else {
                 return setInterval(() => gameLoop(now))

@@ -4,6 +4,7 @@ import {Eventable} from './eventable'
 export type EngineEvent = 'before-update' | 'after-update'
 
 export class EngineEventDispatcher implements Eventable<any> {
+
     private dispatcher = new EventDispatcher<any>()
 
     emit(eventName: 'before-update', delta: number): void
