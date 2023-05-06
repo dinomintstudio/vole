@@ -1,4 +1,5 @@
 import {isBrowser} from './util/runtime'
+import {EngineEventDispatcher} from './engine-event-dispatcher'
 
 export interface FrameInfo {
     lastFrameMillis: number
@@ -12,14 +13,24 @@ export interface Performance {
     idleDelta: number
 }
 
+export interface Entity {
+    id?: number
+
+    update(delta: number): void
+}
+
 export class Engine {
+
+    fps = 60
+    delta = 1000 / this.fps
 
     isRunning: boolean = false
     frameInfo: FrameInfo = {lastFrameMillis: 0, lastFrameDelta: 0, frameRequestMillis: 0}
     performanceInfo: Performance = {updateDelta: 0, frameDelta: 0, idleDelta: 0}
-    fps = 60
-    delta = 1000 / this.fps
+    entities: Entity[] = []
+    eventDispatcher: EngineEventDispatcher = new EngineEventDispatcher()
 
+    private uid = 0
     private requestId?: number | ReturnType<typeof setTimeout>
 
     start(): void {
@@ -34,9 +45,11 @@ export class Engine {
             this.frameInfo.lastFrameMillis = frameFireTime
             this.frameInfo.lastFrameDelta = delta
 
+            this.eventDispatcher.emit('before-update', delta)
             const beforeUpdate = performance.now()
             this.update(delta)
             const afterUpdate = performance.now()
+            this.eventDispatcher.emit('after-update', delta)
 
             this.performanceInfo.frameDelta = delta
             this.performanceInfo.updateDelta = afterUpdate - beforeUpdate
@@ -53,7 +66,21 @@ export class Engine {
     }
 
     update(delta: number) {
-        // console.debug(this.frameInfo, this.performanceInfo)
+        for (let i = 0; i < this.entities.length; i++) {
+            this.entities[i].update(delta)
+        }
+    }
+
+    add(entity: Entity): Entity {
+        if (entity.id) return entity
+
+        entity.id = ++this.uid
+        this.entities.push(entity)
+        return entity
+    }
+
+    remove(id: number): void {
+        this.entities = this.entities.filter(e => e.id !== id)
     }
 
     private requestFrame(gameLoop: (time: number) => void): number | ReturnType<typeof setTimeout> {

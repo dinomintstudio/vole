@@ -28,25 +28,18 @@
 
 import {Eventable} from './eventable'
 
-export class EventDispatcher<T = any> implements Eventable<T> {
-    private _handlers: { [key: string]: { (event: T): void }[] } = {}
-    private _wiredEventDispatchers: Eventable<T>[] = []
+export class EventDispatcher<T> implements Eventable<T> {
+
+    private handlers: { [key: string]: { (event: T): void }[] } = {}
+    private wiredEventDispatchers: Eventable<T>[] = []
+    private deferredHandlerRemovals: { name: string, handler?: (...args: any[]) => any }[] = []
 
     /**
      * Clears any existing handlers or wired event dispatchers on this event dispatcher
      */
     public clear() {
-        this._handlers = {}
-        this._wiredEventDispatchers = []
-    }
-
-    private _deferedHandlerRemovals: { name: string, handler?: (...args: any[]) => any }[] = []
-
-    private _processDeferredHandlerRemovals() {
-        for (const eventHandler of this._deferedHandlerRemovals) {
-            this._removeHandler(eventHandler.name, eventHandler.handler)
-        }
-        this._deferedHandlerRemovals.length = 0
+        this.handlers = {}
+        this.wiredEventDispatchers = []
     }
 
     /**
@@ -55,27 +48,25 @@ export class EventDispatcher<T = any> implements Eventable<T> {
      * @param event      Optionally pass an event data object to the handler
      */
     public emit(eventName: string, event: T) {
-        this._processDeferredHandlerRemovals()
-        if (!eventName) {
-            // key not mapped
-            return
-        }
+        this.processDeferredHandlerRemovals()
         eventName = eventName.toLowerCase()
-        let i: number, len: number
+        let i: number
+        let len: number
 
-        if (this._handlers[eventName]) {
+        const handler = this.handlers[eventName]
+        if (handler) {
             i = 0
-            len = this._handlers[eventName].length
+            len = handler.length
             for (i; i < len; i++) {
-                this._handlers[eventName][i](event)
+                handler[i](event)
             }
         }
 
         i = 0
-        len = this._wiredEventDispatchers.length
+        len = this.wiredEventDispatchers.length
 
         for (i; i < len; i++) {
-            this._wiredEventDispatchers[i].emit(eventName, event)
+            this.wiredEventDispatchers[i].emit(eventName, event)
         }
     }
 
@@ -85,13 +76,13 @@ export class EventDispatcher<T = any> implements Eventable<T> {
      * @param handler    The handler callback to fire on this event
      */
     public on(eventName: string, handler: (event: T) => void) {
-        this._processDeferredHandlerRemovals()
+        this.processDeferredHandlerRemovals()
         eventName = eventName.toLowerCase()
 
-        if (!this._handlers[eventName]) {
-            this._handlers[eventName] = []
+        if (!this.handlers[eventName]) {
+            this.handlers[eventName] = []
         }
-        this._handlers[eventName].push(handler)
+        this.handlers[eventName].push(handler)
     }
 
     /**
@@ -103,24 +94,7 @@ export class EventDispatcher<T = any> implements Eventable<T> {
      * @param handler    Optionally the specific handler to unsubscribe
      */
     public off(eventName: string, handler?: (event: T) => void) {
-        this._deferedHandlerRemovals.push({name: eventName, handler})
-    }
-
-    private _removeHandler(eventName: string, handler?: (event: T) => void) {
-        eventName = eventName.toLowerCase()
-        const eventHandlers = this._handlers[eventName]
-
-        if (eventHandlers) {
-            // if no explicit handler is give with the event name clear all handlers
-            if (!handler) {
-                this._handlers[eventName].length = 0
-            } else {
-                const index = eventHandlers.indexOf(handler)
-                if (index > -1) {
-                    this._handlers[eventName].splice(index, 1)
-                }
-            }
-        }
+        this.deferredHandlerRemovals.push({name: eventName, handler})
     }
 
     /**
@@ -130,7 +104,7 @@ export class EventDispatcher<T = any> implements Eventable<T> {
      * @param handler   The handler of the event that will be auto unsubscribed
      */
     public once(eventName: string, handler: (event: T) => void) {
-        this._processDeferredHandlerRemovals()
+        this.processDeferredHandlerRemovals()
         const metaHandler = (event: T) => {
             this.off(eventName, metaHandler)
             handler(event)
@@ -139,20 +113,27 @@ export class EventDispatcher<T = any> implements Eventable<T> {
         this.on(eventName, metaHandler)
     }
 
-    /**
-     * Wires this event dispatcher to also receive events from another
-     */
-    public wire(eventDispatcher: EventDispatcher): void {
-        eventDispatcher._wiredEventDispatchers.push(this)
+    private processDeferredHandlerRemovals() {
+        for (const eventHandler of this.deferredHandlerRemovals) {
+            this.removeHandler(eventHandler.name, eventHandler.handler)
+        }
+        this.deferredHandlerRemovals.length = 0
     }
 
-    /**
-     * Unwires this event dispatcher from another
-     */
-    public unwire(eventDispatcher: EventDispatcher): void {
-        const index = eventDispatcher._wiredEventDispatchers.indexOf(this)
-        if (index > -1) {
-            eventDispatcher._wiredEventDispatchers.splice(index, 1)
+    private removeHandler(eventName: string, handler?: (event: T) => void) {
+        eventName = eventName.toLowerCase()
+        const eventHandlers = this.handlers[eventName]
+
+        if (eventHandlers) {
+            // if no explicit handler is give with the event name clear all handlers
+            if (!handler) {
+                this.handlers[eventName].length = 0
+            } else {
+                const index = eventHandlers.indexOf(handler)
+                if (index > -1) {
+                    this.handlers[eventName].splice(index, 1)
+                }
+            }
         }
     }
 }
