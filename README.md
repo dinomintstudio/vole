@@ -1,7 +1,7 @@
 <h1 align="center">
   <img src="https://raw.githubusercontent.com/dinomintstudio/vole/master/data/logo/logo.svg" width="200">
   <br>
-  Nois
+  Vole
   <br>
 </h1>
 
