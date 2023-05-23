@@ -9,24 +9,28 @@ export class EngineEventDispatcher implements Eventable<any> {
 
     emit(eventName: 'before-update', delta: number): void
     emit(eventName: 'after-update', delta: number): void
+    emit(eventName: EngineEvent, event: any): void
     emit(eventName: string, event: any): void {
         this.dispatcher.emit(eventName, event)
     }
 
     off(eventName: 'before-update', handler?: (delta: number) => void): void
     off(eventName: 'after-update', handler?: (delta: number) => void): void
+    off(eventName: EngineEvent, handler?: (event: any) => void): void
     off(eventName: string, handler?: (event: any) => void): void {
         this.dispatcher.off(eventName, handler)
     }
 
     on(eventName: 'before-update', handler: (delta: number) => void): void
     on(eventName: 'after-update', handler: (delta: number) => void): void
+    on(eventName: EngineEvent, handler?: (event: any) => void): void
     on(eventName: string, handler: (event: any) => void): void {
         this.dispatcher.on(eventName, handler)
     }
 
     once(eventName: 'before-update', handler: (delta: any) => void): void
     once(eventName: 'after-update', handler: (delta: any) => void): void
+    once(eventName: EngineEvent, handler?: (event: any) => void): void
     once(eventName: string, handler: (event: any) => void): void {
         this.dispatcher.once(eventName, handler)
     }
