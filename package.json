@@ -1,6 +1,6 @@
 {
   "name": "@vole-engine/core",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Tiny 2D game engine",
   "repository": "https://github.com/dinomintstudio/vole",
   "bugs": {
@@ -33,5 +33,6 @@
 	"@swc/jest": "~0.2.26"
   },
   "dependencies": {
+	"rxjs": "~7.8.1"
   }
 }

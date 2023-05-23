@@ -1,6 +1,6 @@
 import {isBrowser} from './util/runtime'
-import {EngineEventDispatcher} from './engine-event-dispatcher'
 import {Scene} from './scene'
+import {Subject} from 'rxjs'
 
 export interface FrameInfo {
     id: number
@@ -17,6 +17,11 @@ export interface PerformanceInfo {
     fpsPotential: number
 }
 
+export interface EngineEventDispatcher {
+    beforeUpdate: Subject<number>
+    afterUpdate: Subject<number>
+}
+
 export class Engine {
 
     fps = 60
@@ -25,7 +30,10 @@ export class Engine {
     isRunning: boolean = false
     frameInfo: FrameInfo = {id: 0, lastFrameMillis: 0, lastFrameDelta: 0, frameRequestMillis: 0}
     performanceInfo: PerformanceInfo = {updateDelta: 0, frameDelta: 0, idleDelta: 0, fps: 0, fpsPotential: 0}
-    eventDispatcher: EngineEventDispatcher = new EngineEventDispatcher()
+    eventDispatcher: EngineEventDispatcher = {
+        beforeUpdate: new Subject<number>(),
+        afterUpdate: new Subject<number>(),
+    }
 
     uid = 0
     frameCount = 0
@@ -47,11 +55,11 @@ export class Engine {
             this.frameInfo.lastFrameMillis = frameFireTime
             this.frameInfo.lastFrameDelta = delta
 
-            this.eventDispatcher.emit('before-update', delta)
+            this.eventDispatcher.beforeUpdate.next(delta)
             const beforeUpdate = performance.now()
             this.update(delta)
             const afterUpdate = performance.now()
-            this.eventDispatcher.emit('after-update', delta)
+            this.eventDispatcher.afterUpdate.next(delta)
 
             this.performanceInfo.frameDelta = delta
             this.performanceInfo.updateDelta = afterUpdate - beforeUpdate

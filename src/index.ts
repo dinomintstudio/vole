@@ -3,7 +3,6 @@ export * from './entity'
 export * from './scene'
 
 export * from './eventable'
-export * from './event-dispatcher'
 
 export * from './component'
 
