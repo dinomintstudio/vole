@@ -29,8 +29,8 @@
 /**
  * A 2D vector on a plane
  */
-import {Cloneable} from './cloneable'
-import {clamp} from './util/clamp'
+import { Cloneable } from './cloneable'
+import { clamp } from './util/clamp'
 
 export class Vector implements Cloneable<Vector> {
     /**

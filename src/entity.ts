@@ -1,14 +1,13 @@
-import {Component} from './component/component'
-import {Engine} from './engine'
+import { Component } from './component/component'
+import { Engine } from './engine'
+import { Scene } from './scene'
 
 export type ConstructorType<T> = new (...args: any) => T
 
 export class Entity {
 
+    scene?: Scene
     components: Map<ConstructorType<any>, Component> = new Map<ConstructorType<any>, Component>()
-
-    constructor() {
-    }
 
     initialized = false
 

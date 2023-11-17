@@ -1,5 +1,5 @@
-import {Component} from './component'
-import {Entity} from '../entity'
+import { Component } from './component'
+import { Entity } from '../entity'
 
 export class IdComponent extends Component {
 

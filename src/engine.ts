@@ -1,6 +1,6 @@
-import {isBrowser} from './util/runtime'
-import {Scene} from './scene'
-import {Subject} from 'rxjs'
+import { isBrowser } from './util/runtime'
+import { Scene } from './scene'
+import { Subject } from 'rxjs'
 
 export interface FrameInfo {
     id: number
@@ -28,8 +28,8 @@ export class Engine {
     delta = 1000 / this.fps
 
     isRunning: boolean = false
-    frameInfo: FrameInfo = {id: 0, lastFrameMillis: 0, lastFrameDelta: 0, frameRequestMillis: 0}
-    performanceInfo: PerformanceInfo = {updateDelta: 0, frameDelta: 0, idleDelta: 0, fps: 0, fpsPotential: 0}
+    frameInfo: FrameInfo = { id: 0, lastFrameMillis: 0, lastFrameDelta: 0, frameRequestMillis: 0 }
+    performanceInfo: PerformanceInfo = { updateDelta: 0, frameDelta: 0, idleDelta: 0, fps: 0, fpsPotential: 0 }
     eventDispatcher: EngineEventDispatcher = {
         beforeUpdate: new Subject<number>(),
         afterUpdate: new Subject<number>(),

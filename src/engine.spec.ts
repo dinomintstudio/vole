@@ -1,5 +1,5 @@
-import {beforeAll, describe, expect, it, jest} from '@jest/globals'
-import {Engine} from './engine'
+import { beforeAll, describe, expect, it, jest } from '@jest/globals'
+import { Engine } from './engine'
 
 describe('engine test', () => {
 

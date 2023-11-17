@@ -1,6 +1,6 @@
-import {Vector} from '../vector'
-import {Component} from './component'
-import {Entity} from '../entity'
+import { Vector } from '../vector'
+import { Component } from './component'
+import { Entity } from '../entity'
 
 export class TransformComponent extends Component {
 

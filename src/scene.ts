@@ -1,7 +1,7 @@
-import {Engine} from './engine'
-import {Camera} from './camera'
-import {Entity} from './entity'
-import {IdComponent} from './component'
+import { Engine } from './engine'
+import { Camera } from './camera'
+import { Entity } from './entity'
+import { IdComponent } from './component'
 
 export class Scene {
 
@@ -24,6 +24,7 @@ export class Scene {
         if (entity.get(IdComponent)) return
 
         entity.add(new IdComponent(entity, ++this.engine!.uid))
+        entity.scene = this
         this.entities.push(entity)
     }
 
