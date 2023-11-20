@@ -3,9 +3,20 @@ import { Collider } from "./collider";
 
 export class Circle implements Collider {
 
-    constructor(public pos: Vector, public radius: number) { }
+    constructor(public center: Vector, public radius: number) { }
 
     collidesPoint(point: Vector): boolean {
-        return this.pos.distance(point) <= this.radius
+        return this.center.distance(point) <= this.radius
     }
+
+    intersects(other: Collider): boolean {
+        if (other instanceof Circle) {
+            return this.center.distance(other.center) <= Math.max(this.radius, other.radius)
+        }
+
+        // allows to implement collisions with custom colliders
+        // beware of infinite recursion!
+        return other.intersects(this)
+    }
+
 }
