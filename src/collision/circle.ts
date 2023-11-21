@@ -19,4 +19,8 @@ export class Circle implements Collider {
         return other.intersects(this)
     }
 
+    translate(pos: Vector): Collider {
+        return new Circle(this.center.add(pos), this.radius)
+    }
+
 }

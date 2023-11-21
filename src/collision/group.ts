@@ -13,4 +13,8 @@ export class Group implements Collider {
         return this.colliders.some(c => c.intersects(other))
     }
 
+    translate(pos: Vector): Collider {
+        return new Group(this.colliders.map(c => c.translate(pos)))
+    }
+
 }

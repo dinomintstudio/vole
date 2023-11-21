@@ -36,4 +36,8 @@ export class Aabb implements Collider {
         return other.intersects(this)
     }
 
+    translate(pos: Vector): Collider {
+        return new Aabb(this.center.add(pos), this.size)
+    }
+
 }
