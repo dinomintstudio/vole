@@ -33,6 +33,17 @@ import { Cloneable } from './cloneable'
 import { clamp } from './util/clamp'
 
 export class Vector implements Cloneable<Vector> {
+
+    /**
+     * X component
+     */
+    x: number
+
+    /**
+     * Y component
+     */
+    y: number
+
     /**
      * A (0, 0) vector
      */
@@ -130,42 +141,8 @@ export class Vector implements Cloneable<Vector> {
      * @param y  Y component of the Vector
      */
     constructor(x: number, y: number) {
-        this._x = x
-        this._y = y
-    }
-
-    protected _x = 0
-
-    /**
-     * Get the x component of the vector
-     */
-    public get x(): number {
-        return this._x
-    }
-
-    /**
-     * Set the x component, THIS MUTATES the current vector. It is usually better to create a new vector.
-     * @warning **Be very careful setting components on shared vectors, mutating shared vectors can cause hard to find bugs**
-     */
-    public set x(val: number) {
-        this._x = val
-    }
-
-    protected _y = 0
-
-    /**
-     * Get the y component of the vector
-     */
-    public get y(): number {
-        return this._y
-    }
-
-    /**
-     * Set the y component, THIS MUTATES the current vector. It is usually better to create a new vector.
-     * @warning **Be very careful setting components on shared vectors, mutating shared vectors can cause hard to find bugs**
-     */
-    public set y(val: number) {
-        this._y = val
+        this.x = x
+        this.y = y
     }
 
     /**
@@ -174,8 +151,8 @@ export class Vector implements Cloneable<Vector> {
      * @warning **Be very careful using this, mutating vectors can cause hard to find bugs**
      */
     setTo(x: number, y: number) {
-        (this.x as number) = x;
-        (this.y as number) = y
+        this.x = x
+        this.y = y
     }
 
     /**
