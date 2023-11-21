@@ -22,10 +22,10 @@ export class Aabb implements Collider {
         }
         if (other instanceof Circle) {
             // https://gamedev.stackexchange.com/a/178154
-            const dist = this.center.sub(other.center)
+            const dist = other.center.sub(this.center)
             const clamped = vec(
-                clamp(dist.x, this.center.x - this.size.x * 0.5, this.center.x + this.size.x * 0.5),
-                clamp(dist.y, this.center.y - this.size.y * 0.5, this.center.y + this.size.y * 0.5),
+                clamp(dist.x, this.center.x - this.size.x, this.center.x + this.size.x),
+                clamp(dist.y, this.center.y - this.size.y, this.center.y + this.size.y),
             )
             const closest = this.center.add(clamped)
             return closest.distance(other.center) <= other.radius

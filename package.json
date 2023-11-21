@@ -1,6 +1,6 @@
 {
   "name": "@vole-engine/core",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "description": "Tiny 2D game engine",
   "repository": "https://github.com/dinomintstudio/vole",
   "author": "ivanjermakov",
