@@ -24,8 +24,8 @@ export class Aabb implements Collider {
             // https://gamedev.stackexchange.com/a/178154
             const dist = other.center.sub(this.center)
             const clamped = vec(
-                clamp(dist.x, this.center.x - this.size.x, this.center.x + this.size.x),
-                clamp(dist.y, this.center.y - this.size.y, this.center.y + this.size.y),
+                clamp(dist.x, -this.size.x * 0.5, this.size.x * 0.5),
+                clamp(dist.y, -this.size.y * 0.5, this.size.y * 0.5),
             )
             const closest = this.center.add(clamped)
             return closest.distance(other.center) <= other.radius
