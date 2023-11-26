@@ -11,6 +11,7 @@ export interface FrameInfo {
 
 export interface PerformanceInfo {
     updateDelta: number
+    drawDelta: number
     frameDelta: number
     idleDelta: number
     fps: number
@@ -20,6 +21,8 @@ export interface PerformanceInfo {
 export interface EngineEventDispatcher {
     beforeUpdate: Subject<number>
     afterUpdate: Subject<number>
+    beforeDraw: Subject<number>
+    afterDraw: Subject<number>
 }
 
 export class Engine {
@@ -29,10 +32,12 @@ export class Engine {
 
     isRunning: boolean = false
     frameInfo: FrameInfo = { id: 0, lastFrameMillis: 0, lastFrameDelta: 0, frameRequestMillis: 0 }
-    performanceInfo: PerformanceInfo = { updateDelta: 0, frameDelta: 0, idleDelta: 0, fps: 0, fpsPotential: 0 }
+    performanceInfo: PerformanceInfo = { updateDelta: 0, drawDelta: 0, frameDelta: 0, idleDelta: 0, fps: 0, fpsPotential: 0 }
     eventDispatcher: EngineEventDispatcher = {
         beforeUpdate: new Subject<number>(),
         afterUpdate: new Subject<number>(),
+        beforeDraw: new Subject<number>(),
+        afterDraw: new Subject<number>(),
     }
 
     uid = 0
@@ -55,15 +60,22 @@ export class Engine {
             this.frameInfo.lastFrameMillis = frameFireTime
             this.frameInfo.lastFrameDelta = delta
 
-            this.eventDispatcher.beforeUpdate.next(delta)
             const beforeUpdate = performance.now()
+            this.eventDispatcher.beforeUpdate.next(delta)
             this.update(delta)
-            const afterUpdate = performance.now()
             this.eventDispatcher.afterUpdate.next(delta)
+            const afterUpdate = performance.now()
+
+            const beforeDraw = performance.now()
+            this.eventDispatcher.beforeDraw.next(delta)
+            this.draw(delta)
+            this.eventDispatcher.afterDraw.next(delta)
+            const afterDraw = performance.now()
 
             this.performanceInfo.frameDelta = delta
             this.performanceInfo.updateDelta = afterUpdate - beforeUpdate
-            this.performanceInfo.idleDelta = this.performanceInfo.frameDelta - this.performanceInfo.updateDelta
+            this.performanceInfo.drawDelta = afterDraw - beforeDraw
+            this.performanceInfo.idleDelta = this.performanceInfo.frameDelta - this.performanceInfo.updateDelta - this.performanceInfo.drawDelta
             this.performanceInfo.fps = 1000 / delta
             this.performanceInfo.fpsPotential = 1000 / this.performanceInfo.updateDelta
             this.frameInfo.frameRequestMillis = afterUpdate
@@ -91,6 +103,14 @@ export class Engine {
         }
     }
 
+    draw(delta: number): void {
+        if (!this.activeScene) return
+        const entities = this.activeScene.entities
+        for (let i = 0; i < entities.length; i++) {
+            entities[i].draw(this, delta)
+        }
+    }
+
     addScene(scene: Scene): void {
         if (this.sceneMap.get(scene.name)) return
         scene.engine = this
@@ -106,6 +126,7 @@ export class Engine {
         const scene = this.sceneMap.get(sceneName)
         if (!scene) return
         this.activeScene = scene
+        scene.activated()
     }
 
     private requestFrame(gameLoop: (time: number) => void): number | ReturnType<typeof setTimeout> {

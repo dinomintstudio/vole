@@ -17,6 +17,9 @@ export class Entity {
     update(engine: Engine, delta: number): void {
     }
 
+    draw(engine: Engine, delta: number): void {
+    }
+
     add<T extends Component>(component: T): void {
         this.components.set(component.constructor as ConstructorType<T>, component)
     }
