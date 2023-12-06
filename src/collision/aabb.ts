@@ -40,4 +40,8 @@ export class Aabb implements Collider {
         return new Aabb(this.center.add(pos), this.size)
     }
 
+    scale(pos: Vector): Collider {
+        return new Aabb(this.center, this.size.scale(pos))
+    }
+
 }

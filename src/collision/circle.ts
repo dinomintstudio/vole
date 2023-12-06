@@ -23,4 +23,8 @@ export class Circle implements Collider {
         return new Circle(this.center.add(pos), this.radius)
     }
 
+    scale(pos: Vector): Collider {
+        return new Circle(this.center, this.radius * pos.x)
+    }
+
 }

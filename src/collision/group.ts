@@ -17,4 +17,8 @@ export class Group implements Collider {
         return new Group(this.colliders.map(c => c.translate(pos)))
     }
 
+    scale(pos: Vector): Collider {
+        return new Group(this.colliders.map(c => c.scale(pos)))
+    }
+
 }
