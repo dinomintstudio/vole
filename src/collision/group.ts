@@ -3,22 +3,22 @@ import { Collider } from "./collider";
 
 export class Group implements Collider {
 
-    constructor(public colliders: Collider[]) { }
+    constructor(public pos: Vector, public colliders: Collider[]) { }
 
     collidesPoint(point: Vector): boolean {
-        return this.colliders.some(c => c.collidesPoint(point))
+        return this.colliders.some(c => c.translate(this.pos).collidesPoint(point))
     }
 
     intersects(other: Collider): boolean {
-        return this.colliders.some(c => c.intersects(other))
+        return this.colliders.some(c => c.translate(this.pos).intersects(other))
     }
 
     translate(pos: Vector): Collider {
-        return new Group(this.colliders.map(c => c.translate(pos)))
+        return new Group(this.pos.add(pos), this.colliders)
     }
 
     scale(pos: Vector): Collider {
-        return new Group(this.colliders.map(c => c.scale(pos)))
+        return new Group(this.pos, this.colliders.map(c => c.scale(pos)))
     }
 
 }
