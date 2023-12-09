@@ -11,7 +11,7 @@ export class Circle implements Collider {
 
     intersects(other: Collider): boolean {
         if (other instanceof Circle) {
-            return this.pos.distance(other.pos) <= Math.max(this.radius, other.radius)
+            return this.pos.distance(other.pos) <= this.radius + other.radius
         }
 
         // allows to implement collisions with custom colliders
