@@ -56,9 +56,6 @@ export class Engine {
             this.requestId = this.requestFrame(gameLoop)
 
             const delta = frameFireTime - (this.frameInfo?.lastFrameMillis ?? 0)
-            this.frameInfo.id = ++this.frameCount
-            this.frameInfo.lastFrameMillis = frameFireTime
-            this.frameInfo.lastFrameDelta = delta
 
             const beforeUpdate = performance.now()
             this.eventDispatcher.beforeUpdate.next(delta)
@@ -79,6 +76,10 @@ export class Engine {
             this.performanceInfo.fps = 1000 / delta
             this.performanceInfo.fpsPotential = 1000 / this.performanceInfo.updateDelta
             this.frameInfo.frameRequestMillis = afterUpdate
+
+            this.frameInfo.id = ++this.frameCount
+            this.frameInfo.lastFrameMillis = frameFireTime
+            this.frameInfo.lastFrameDelta = delta
         }
 
         gameLoop(performance.now())
