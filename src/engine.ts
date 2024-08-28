@@ -126,6 +126,7 @@ export class Engine {
     goToScene(sceneName: string): void {
         const scene = this.sceneMap.get(sceneName)
         if (!scene) return
+        this.activeScene?.deactivated()
         this.activeScene = scene
         scene.activated()
     }

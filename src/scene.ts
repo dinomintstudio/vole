@@ -26,6 +26,12 @@ export class Scene {
     activated(): void {
     }
 
+    /**
+     * Called by the engine once right after engine goes to another scene
+     */
+    deactivated(): void {
+    }
+
     add(entity: Entity): void {
         if (entity.get(IdComponent)) return
 
