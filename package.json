@@ -1,7 +1,7 @@
 {
     "$schema": "https://json.schemastore.org/package.json",
     "name": "@vole-engine/core",
-    "version": "0.0.44",
+    "version": "0.0.46",
     "description": "Tiny 2D game engine",
     "repository": "https://github.com/dinomintstudio/vole",
     "author": "ivanjermakov",
@@ -17,6 +17,9 @@
         "game-engine",
         "game-engine-2d"
     ],
+    "exports": {
+        "./*": "./*.js"
+    },
     "scripts": {
         "build:dev": "tsc",
         "build:prod": "tsc -p tsconfig.prod.json",

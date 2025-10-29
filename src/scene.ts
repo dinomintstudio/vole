@@ -1,7 +1,7 @@
 import { Engine } from './engine'
 import { Camera } from './camera'
 import { Entity } from './entity'
-import { IdComponent } from './component'
+import { IdComponent } from './component/id.component'
 
 export class Scene {
 

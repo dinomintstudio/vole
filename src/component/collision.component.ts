@@ -1,6 +1,6 @@
 import { Component } from './component'
 import { Entity } from '../entity'
-import { Collider } from '../collision'
+import { Collider } from '../collision/collider'
 
 export class CollisionComponent extends Component {
 
